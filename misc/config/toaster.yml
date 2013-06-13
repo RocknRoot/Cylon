@@ -1,0 +1,21 @@
+
+username: toaster
+password: toaster_password
+domain: frak.net
+
+groupchat:
+      - saloon@conference.domain.net: password
+      - muc@conference.anotherdomain.com
+
+chat_name: NickInChat
+default_status: Frak yeah !
+command_prefix: '!tk'
+master_names:
+      - fraker@frak.net
+      - another_fraker@frak.net
+plugin_dir: /a/path/where/plugins/are
+loaded_plugins_at_start:
+      - plugin_name_1
+      - plugin_name_2
+
+log_mode: 0

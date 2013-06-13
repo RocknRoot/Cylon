@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+
+import toaster.__main__
+
+Toaster()
