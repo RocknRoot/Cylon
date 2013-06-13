@@ -23,7 +23,11 @@ class Settings:
 
     def __init__(self, conf_file):
       logging.debug("Starting configuration parsing")
-      stream = file(conf_file, 'r')
+      try:
+        stream = file(conf_file, 'r')
+      except Exception, e:
+        logging.error("%s read: %s" % (conf_file, str(e)))
+        exit()
       logging.info("Loading %s" % conf_file)
       self._conf_file_values = load(stream)
       logging.info("Configuration loaded")
