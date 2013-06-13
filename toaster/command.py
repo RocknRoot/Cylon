@@ -64,15 +64,16 @@ class Loader:
 
   @staticmethod
   def get_modules(plugins_dir, plugins_to_load):
+    plugins = {'publics' : {}, 'privates': {}}
     if exists(plugins_dir):
       plugin_list = glob.glob("%s/**/*.mod" %
                                plugins_dir)
       plugins = get_needed_class(plugin_list,
                                  plugins_to_load)
-      return plugins
     else:
       logging.error("plugin_dir doesn't exist !")
-      exit()
+
+    return plugins
 
   @staticmethod
   def get_builtins():
