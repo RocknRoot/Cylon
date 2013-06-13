@@ -2,16 +2,16 @@ from distutils.core import setup
 
 
 setup(
-    name="Toaster",
+    name="Cylon",
     version="0.1",
     description="XMPP bot",
     long_description="XMPP bot fur teh lulz",
     author="Thibaut Deloffre",
     author_email="tib@rocknroot.org",
-    url="https://github.com/RocknRoot/Toaster",
+    url="https://github.com/RocknRoot/Cylon",
     license="BSD",
     platforms="Unix",
-    packages=["toaster"],
-    provides=["toaster", "xmpppy", "pyyaml"],
-    scripts=["bin/toaster"],
+    packages=["cylon"],
+    provides=["cylon", "xmpppy", "pyyaml"],
+    scripts=["bin/cylon"],
     keywords=["Jabber", "XMPP", "Bot", "Plugins"])

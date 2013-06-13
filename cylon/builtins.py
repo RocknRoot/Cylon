@@ -1,9 +1,9 @@
-from toaster.command import Plugin, Public, Private
+from cylon.command import Plugin, Public, Private
 
 class Help(Public):
 
   def help(self, *args):
-    msg = "\nToaster help:\n  Available modules:\n"
+    msg = "\nCylon help:\n  Available modules:\n"
     if not self.request_is_private:
       array = ['publics']
     else:

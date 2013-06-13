@@ -60,7 +60,7 @@ class Private(Plugin):
 class Loader:
 
   BUILTINS = ['mod', 'help']
-  BUILTIN_PLUGINS = 'toaster.builtins'
+  BUILTIN_PLUGINS = 'cylon.builtins'
 
   @staticmethod
   def get_modules(plugins_dir, plugins_to_load):

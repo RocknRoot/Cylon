@@ -1,12 +1,12 @@
 import logging
 import xmpp
 import re
-from toaster.conf    import Settings
-from toaster.command import Loader, Plugin
+from cylon.conf    import Settings
+from cylon.command import Loader, Plugin
 
 from optparse        import OptionParser
 
-class Toaster:
+class Cylon:
 
     MSG_OK = 'Accept my fraking request. Now.'
     MSG_KO = 'DENIED.'
@@ -16,10 +16,10 @@ class Toaster:
       self._conn = None
       self._parser = OptionParser()
       self._parser.add_option("-c", "--conf_file", dest="conf_file",
-                  default="/etc/toaster.yml",
+                  default="/etc/cylon.yml",
                   help="use configuration file", )
       self._parser.add_option("-l", "--log_file", dest="log_file",
-                  default="/var/log/toaster.log",
+                  default="/var/log/cylon.log",
                   help="use specified file to write logs")
       self._parser.add_option("-D", "--debug", dest="debug",
                   action="store_false", default=True,
@@ -28,7 +28,7 @@ class Toaster:
       (self._options, self._args) = self._parser.parse_args()
       logging.basicConfig(filename=self._options.log_file,
                           level=logging.INFO)
-      logging.info("Starting Toaster !")
+      logging.info("Starting Cylon !")
       self._settings = Settings(self._options.conf_file)
       self._modules = Loader.get_modules(self._settings.plugin_dir,
                                          self._settings.loaded_plugins_at_start)
