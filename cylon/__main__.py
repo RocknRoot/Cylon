@@ -50,12 +50,6 @@ class Cylon:
       if sender == self._settings.chat_name: return
       body = mess.getBody()
       if not body: return
-      #if mess.getBody()
-      print mess.getType()
-      print mess.getFrom()
-      print mess.getProperties()
-      print mess.getBody()
-      print mess.getFrom().getResource()
 
       prefixed = mess.getBody().startswith("%s "
            % self._settings.command_prefix)
@@ -123,7 +117,7 @@ class Cylon:
                 message = xmpp.protocol.Message(body=text_plain)
         return message
 
-    def callback_presence(self, conn, presence):
+    def presence_handler(self, conn, presence):
         jid, ptype, status = presence.getFrom(), \
                              presence.getType(), \
                              presence.getStatus()
@@ -183,7 +177,7 @@ class Cylon:
           logging.warning("Unable to get SASL creditential for: %s." %
                           self.jid.getDomain())
         conn.RegisterHandler('message', self.message_handler)
-        conn.RegisterHandler('presence', self.callback_presence)
+        conn.RegisterHandler('presence', self.presence_handler)
         conn.sendInitPresence()
         self.roster = conn.Roster.getRoster()
         self._conn = conn
