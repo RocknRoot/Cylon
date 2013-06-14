@@ -66,7 +66,7 @@ class Loader:
   def get_modules(plugins_dir, plugins_to_load):
     plugins = {'publics' : {}, 'privates': {}}
     if exists(plugins_dir):
-      plugin_list = glob.glob("%s/**/*.mod" %
+      plugin_list = glob.glob("%s/**/**/*.mod" %
                                plugins_dir)
       plugins = get_needed_class(plugin_list,
                                  plugins_to_load)
