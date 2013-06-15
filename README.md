@@ -18,6 +18,14 @@ Tested with Python (3.0 SOON):
 
 ## Installation
 
+    Via Git:
+
+    $ git clone https://github.com/RocknRoot/Cylon
+    $ cd Cylon
+    # python setup.py install
+
+    Or via PiPY:
+
     # pip install Cylon
 
 ## Configuration
