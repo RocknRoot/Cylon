@@ -3,7 +3,7 @@ from distutils.core import setup
 
 setup(
     name="Cylon",
-    version="0.3",
+    version="0.4",
     description="XMPP bot",
     long_description="XMPP bot fur teh lulz",
     author="Thibaut Deloffre",

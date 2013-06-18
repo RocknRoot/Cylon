@@ -199,8 +199,14 @@ class Cylon:
       while True:
         try:
           self._conn.Process(1)
+          if not self._conn.isConnected():
+            logging.info('Bot not connected, reconnecting...')
+            self._conn.reconnectAndReauth()
         except KeyboardInterrupt:
           logging.info('Signal catched, shutting down.')
+          break
+        except:
+          logging.err('Unexpected error')
           break
       logging.info('Exiting. Bye.')
       exit()
