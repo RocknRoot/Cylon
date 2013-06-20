@@ -87,7 +87,9 @@ class Cylon:
             msg = "Function %s not implemented." % func
             logging.error("%s plugin exec: %s" % (class_, str(e)))
           try:
-            msg = modules[class_].wrapper(func, cmd_parameters)
+            msg = modules[class_].wrapper(func, mess.getBody(),
+                                          mess.getFrom(), mess.getType(),
+                                          cmd_parameters)
           except Exception, e:
             msg = "Error during %s function execution." % func
             logging.error("%s plugin exec: %s" % (class_, str(e)))

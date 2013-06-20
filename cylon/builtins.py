@@ -1,8 +1,9 @@
+import logging
 from cylon.command import Plugin, Public, Private
 
 class Help(Public):
 
-  def help(self, *args):
+  def help(self, body, from_user, chat_type, args):
     msg = "\nCylon help:\n  Available modules:\n"
     if not self.request_is_private:
       array = ['publics']
@@ -15,7 +16,7 @@ class Help(Public):
 
 class Mod(Private):
 
-  def help(self, *args):
+  def help(self, body, from_user, chat_type, args):
     msg = "\nmodule builtin:\n\
     mod help - display help\n\
     mod list - list modules\n\
