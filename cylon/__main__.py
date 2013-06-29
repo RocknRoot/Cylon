@@ -30,8 +30,13 @@ class Cylon:
                           level=logging.INFO)
       logging.info("Starting Cylon !")
       self._settings = Settings(self._options.conf_file)
-      self._modules = Loader.get_modules(self._settings.plugin_dir,
-                                         self._settings.loaded_plugins_at_start)
+      if not hasattr(self._settings, 'plugin_aliases'):
+        self._settings.plugin_aliases = {}
+      modules = Loader.get_modules(self._settings.plugin_dir,
+                                   self._settings.loaded_plugins_at_start,
+                                   self._settings.plugin_aliases)
+      self._modules = modules[0]
+      self._aliases = modules[1]
       built = Loader.get_builtins()
       self._modules['publics'].update(built['publics'])
       self._modules['privates'].update(built['privates'])
@@ -55,7 +60,9 @@ class Cylon:
            % self._settings.command_prefix)
 
       modules = {}
+      aliases = {}
       modules.update(self._modules['publics'])
+      aliases.update(self._aliases['publics'])
       if mess.getType() == "groupchat":
         Plugin.request_is_private = False
         muc_from = str(mess.getFrom())
@@ -67,38 +74,60 @@ class Cylon:
         msg_type = "chat"
         if str(mess.getFrom()).split('/')[0] in self._settings.master_names:
           modules.update(self._modules['privates'])
+          aliases.update(self._aliases['privates'])
 
       if prefixed or (mess.getType() == "chat"):
         cmd = mess.getBody()
         if prefixed:
           length = self._settings.command_prefix.__len__()
           cmd = cmd[length + 1:]
+          logging.info(cmd)
         cmd_parameters = cmd.split()
-        if modules.has_key(cmd_parameters[0]):
-          try:
-            class_ = cmd_parameters.pop(0)
-            if not cmd_parameters:
-              func = "default"
-            else:
-              func =  cmd_parameters.pop(0)
-            # Way to test if class exists.If exception, error msg.
-            method = getattr(modules[class_], func)
-          except AttributeError, e:
-            msg = "Function %s not implemented." % func
-            logging.error("%s plugin exec: %s" % (class_, str(e)))
-          try:
-            msg = modules[class_].wrapper(func, mess.getBody(),
-                                          mess.getFrom(), mess.getType(),
-                                          cmd_parameters)
-          except Exception, e:
-            msg = "Error during %s function execution." % func
-            logging.error("%s plugin exec: %s" % (class_, str(e)))
+        plugin_name = cmd_parameters[0]
+        if modules.has_key(plugin_name) or aliases.has_key(plugin_name):
+          if aliases.has_key(plugin_name):
+            func = aliases[plugin_name].keys()[0]
+            inst = aliases[plugin_name][func]
+            cmd_parameters.pop(0)
+            logging.info(func)
+            logging.info(inst)
+            logging.info(cmd_parameters)
+            try:
+              msg = self.__call_plugin(mess, inst, func, cmd_parameters)
+            except AttributeError, e:
+              msg = "Function %s not implemented." % func
+              logging.error("%s plugin exec: %s" % (class_, str(e)))
+          else:
+            try:
+              class_ = cmd_parameters.pop(0)
+              inst = modules[class_]
+              if not cmd_parameters:
+                func = "default"
+              else:
+                func =  cmd_parameters.pop(0)
+              # Way to test if class exists.If exception, error msg.
+              method = getattr(inst, func)
+              msg = self.__call_plugin(mess, inst, func, cmd_parameters)
+            except AttributeError, e:
+              msg = "Function %s not implemented." % func
+              logging.error("%s plugin exec: %s" % (class_, str(e)))
         else:
-          msg = "Command '%s': not found." % cmd_parameters[0]
+          msg = "Command '%s': not found." % plugin_name
         if not msg:
           # When a module doesn't return str.
           msg = "Hmm. Problem(s) during command execution. (Null return)."
         self.send(reply_to, msg, msg_type)
+
+    def __call_plugin(self, xmpp_mess, class_, func, param):
+      try:
+        msg = class_.wrapper(func, xmpp_mess.getBody(),
+                             xmpp_mess.getFrom(), xmpp_mess.getType(),
+                             param)
+      except Exception, e:
+        msg = "Error during %s function execution." % func
+        logging.error("%s plugin exec: %s" % (class_, str(e)))
+
+      return msg
 
     def send(self, user, text, mess_type='chat'):
         mess = self.build_message(text)
@@ -208,7 +237,7 @@ class Cylon:
           logging.info('Signal catched, shutting down.')
           break
         except:
-          logging.err('Unexpected error')
+          logging.error('Unexpected error')
           break
       logging.info('Exiting. Bye.')
       exit()

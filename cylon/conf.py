@@ -15,9 +15,8 @@ class Settings:
 
     OPTIONNAL_ATTR = { 'log_mode' : int,
                        'default_status' : str,
-                       'muc' : str,
-                       'muc_pwd': str,
-                       'groupchat': list }
+                       'groupchat': list,
+                       'plugin_aliases' : list }
 
     ATTRS = [ MANDATORY_ATTR, OPTIONNAL_ATTR ]
 
@@ -35,6 +34,30 @@ class Settings:
       self.__check()
       self.jid = "%s@%s" % (self.username, self.domain)
 
+    def __build_alias_settings(self, alias_list):
+      logging.debug("Get alias list settings:")
+      alias_hash = {}
+      for alias in alias_list:
+        str_ = alias.keys()[0]
+        data = str_.split('.')
+        if str_ == data[0]:
+          logging.info("Alias %s not loaded." % data[0])
+          continue
+        else:
+          alias_name = alias[str_]
+          plugin_name = data[0]
+          if (alias_name == None) or (alias_name == plugin_name):
+            logging.info("Alias %s not loaded." % data[0])
+            continue
+          plugin_method = data[1]
+          if alias_hash.has_key(plugin_name):
+            alias_hash[plugin_name].update({ plugin_method : alias_name})
+          else:
+            alias_hash.update({ plugin_name : { plugin_method : alias_name }})
+        del alias
+      print alias_hash
+      return alias_hash
+
     def __check(self):
       logging.debug("Configuration check")
       for attr_type in self.ATTRS:
@@ -45,7 +68,10 @@ class Settings:
                            (attr, attr_type[attr]))
               exit()
             else:
-              value = self._conf_file_values[attr]
+              if attr == "plugin_aliases":
+                value = self.__build_alias_settings(self._conf_file_values[attr])
+              else:
+                value = self._conf_file_values[attr]
               setattr(self, attr, value)
               if attr == "password":
                 value = "NOT WRITTEN IN LOGFILE"

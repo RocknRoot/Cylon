@@ -63,13 +63,15 @@ class Loader:
   BUILTIN_PLUGINS = 'cylon.builtins'
 
   @staticmethod
-  def get_modules(plugins_dir, plugins_to_load):
-    plugins = {'publics' : {}, 'privates': {}}
+  def get_modules(plugins_dir, plugins_to_load, alias_list):
+    plugins = [{'publics' : {}, 'privates': {}},
+               {'publics' : {}, 'privates': {}}]
     if exists(plugins_dir):
       plugin_list = glob.glob("%s/**/**/*.mod" %
                                plugins_dir)
       plugins = get_needed_class(plugin_list,
-                                 plugins_to_load)
+                                 plugins_to_load,
+                                 alias_list)
     else:
       logging.error("plugin_dir doesn't exist !")
 
@@ -99,9 +101,18 @@ def cmd_to_class(command):
     command = command[:pos] + command[pos + 1:].capitalize()
   return command.capitalize()
 
+def compute_aliases(alias_info, class_inst, plugin_name):
+  logging.debug("Loading aliases...")
+  alias_hash = {}
+  for method_name, alias_name in alias_info.iteritems():
+    alias_hash.update({alias_name : { method_name : class_inst }})
+  logging.debug("Final alias list:")
+  logging.debug(alias_hash)
+  return alias_hash
 
-def get_needed_class(filenames, plugin_list):
+def get_needed_class(filenames, plugin_list, alias_list):
   plugins = { 'publics' : {}, 'privates' : {}}
+  aliases = { 'publics' : {}, 'privates' : {}}
   for filename in filenames:
     path_array = filename.split('/')
     name = path_array[-1:][0].split('.')[0]
@@ -121,11 +132,16 @@ def get_needed_class(filenames, plugin_list):
         class_inst = class_()
         if class_inst.is_public():
           plugins['publics'].update({name : class_inst})
+          if name in alias_list.keys():
+            aliases['publics'].update(compute_aliases(alias_list[name], class_inst, name))
         else:
           plugins['privates'].update({name : class_inst})
+          if alias_list.has_key(name):
+            aliases['privates'].update(compute_aliases(alias_list[name], class_inst, name))
       except TypeError:
         logging.error("You need to define help method for %s plugin class" % wanted_class)
     else:
       logging.warn("No %s class found in %s plugin file." %
                   (wanted_class, filename))
-  return plugins
+  return [plugins, aliases]
+
