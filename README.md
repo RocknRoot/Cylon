@@ -3,7 +3,7 @@
 A pluginable XMPP Bot fur teh lulz.
 
 * Homepage : https://pypi.python.org/pypi/Cylon
-* Version : 0.1
+* Version : 0.6
 
 Code is free, so if you're paranoid, you can install it at home or in that little private internet
 of yours. Or just participate to the development. Fork us !
@@ -54,6 +54,10 @@ plugin_dir: /a/path/where/plugins/are
 loaded_plugins_at_start:
       - plugin_name_1
       - plugin_name_2
+
+plugin_aliases:
+      # !tk plugin_name_2 a_long_method -> !tk short
+      - plugin_name_2.a_long_method_name : short
 
 log_mode: 0
 
