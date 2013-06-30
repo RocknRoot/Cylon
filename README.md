@@ -67,6 +67,18 @@ log_mode: 0
 
     $ cylon -c /etc/cylon.yml -l /var/log/cylon.log
 
+## Developing Cylon
+
+Get the git repository:
+
+    $ git clone https://github.com/RocknRoot/Cylon.git
+
+Update files.
+Create a working configuration file.
+Test Cylon:
+
+    $ ./cylon.py -c path/of/your/dev/conf/file -l path/of/your/dev/log/file
+
 ## Debugging Cylon (Console mode)
 
     $ cylon -c /etc/cylon.yml -l /var/log/cylon.log -D
@@ -79,7 +91,7 @@ or
 
 Add an issue on github ! ;)
 
-Jabber: support@rootest.rocknroot.org
+Jabber MUC (groupchat or channel): support@rootest.rocknroot.org
 
 ## License
 
