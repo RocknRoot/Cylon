@@ -2,7 +2,8 @@ import logging
 import xmpp
 import re
 from cylon.conf    import Settings
-from cylon.command import Loader, Plugin
+from cylon.command import Loader
+from cylon.plugin  import Plugin
 
 from optparse        import OptionParser
 

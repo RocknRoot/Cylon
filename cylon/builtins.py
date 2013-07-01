@@ -1,5 +1,5 @@
 import logging
-from cylon.command import Plugin, Public, Private
+from cylon.plugin import Plugin, Public, Private
 
 class Help(Public):
 
