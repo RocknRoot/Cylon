@@ -89,9 +89,6 @@ class Cylon:
             func = aliases[plugin_name].keys()[0]
             inst = aliases[plugin_name][func]
             cmd_parameters.pop(0)
-            logging.info(func)
-            logging.info(inst)
-            logging.info(cmd_parameters)
             try:
               msg = self.__call_plugin(mess, inst, func, cmd_parameters)
             except AttributeError, e:
