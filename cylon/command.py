@@ -59,7 +59,7 @@ class Private(Plugin):
 
 class Loader:
 
-  BUILTINS = ['mod', 'help']
+  BUILTINS = ['plug', 'help']
   BUILTIN_PLUGINS = 'cylon.builtins'
 
   @staticmethod
