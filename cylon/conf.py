@@ -8,6 +8,7 @@ class Settings:
                        'domain' : str,
                        'password' : str ,
                        'loaded_plugins_at_start' : list,
+                       'loaded_hooks_at_start' : list,
                        'plugin_dir' : str,
                        'chat_name' : str,
                        'master_names' : list,
