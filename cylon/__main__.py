@@ -83,14 +83,15 @@ class Cylon:
     # hooks
     if (prefixed == False) and (self._hooks != None):
       for hook in self._hooks:
-        for regex, func in hook.regex:
+        for regex, func in self._hooks[hook].regex:
           res = regex.search(mess.getBody())
           if res != None:
             try:
-              msg = getattr(hook, func)(mess.getBody(), mess.getFrom(), res)
+              msg = getattr(self._hooks[hook], func)(mess.getBody(), mess.getFrom(), res)
             except:
               msg = "%s hook execution error" % hook.__class__.__name__
             if msg:
+              logging.debug(msg)
               if mess.getType() == "groupchat":
                 self.send(str(mess.getFrom()).split('/')[0], msg, "groupchat")
               else:
