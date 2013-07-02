@@ -79,7 +79,15 @@ class Cylon:
         for regex, func in hook.regex:
           res = regex.search(mess.getBody())
           if res != None:
-            getattr(hook, func)(mess.getBody(), mess.getFrom(), res)
+            try:
+              msg = getattr(hook, func)(mess.getBody(), mess.getFrom(), res)
+            except:
+              msg = "%s hook execution error" %s hook.__class__.__name__
+            if msg:
+              if mess.getType() == "groupchat":
+                self.send(str(mess.getFrom()).split('/')[0], msg, "groupchat")
+              else:
+                self;send(mess.getFrom(), msg, "chat")
 
     # plugins
     modules = {}
