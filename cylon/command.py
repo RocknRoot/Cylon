@@ -136,4 +136,4 @@ def get_needed_hooks(filenames, hook_list):
         logging.error("You need to define ACTIONS dictionary for %s hook class" % wanted_class)
     else:
       logging.warn("No %s class found in %s hook file." % (wanted_class, filename))
-      return [plugins, aliases]
+  return hooks
