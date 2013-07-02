@@ -7,8 +7,10 @@ from cylon.plugin import Plugin, Public, Private
 
 class Loader:
 
+
   BUILTINS = ['plug', 'help']
   BUILTIN_PLUGINS = 'cylon.builtins'
+
 
   @staticmethod
   def get_modules(plugins_dir, plugins_to_load, alias_list):
@@ -24,6 +26,7 @@ class Loader:
       logging.error("plugin_dir doesn't exist !")
 
     return plugins
+
 
   @staticmethod
   def get_builtins():
@@ -43,11 +46,24 @@ class Loader:
                        builtin_name)
     return builtins
 
+
+  @staticmethod
+  def get_hooks(hooks_dir, hooks_to_load):
+    hooks = {}
+    if exists(hooks_dir):
+      hook_list = glob.glob("%s/**/**/*.hook" % hooks_dir)
+      hooks = get_needed_hooks(hook_list, hooks_to_load)
+    else:
+      logging.error("hook_dir doesn't exist ! ")
+    return hooks
+
+
 def cmd_to_class(command):
   while '_' in command:
     pos = command.index('_')
     command = command[:pos] + command[pos + 1:].capitalize()
   return command.capitalize()
+
 
 def compute_aliases(alias_info, class_inst, plugin_name):
   logging.debug("Loading aliases...")
@@ -58,6 +74,7 @@ def compute_aliases(alias_info, class_inst, plugin_name):
   logging.debug(alias_hash)
   return alias_hash
 
+
 def get_needed_class(filenames, plugin_list, alias_list):
   plugins = { 'publics' : {}, 'privates' : {}}
   aliases = { 'publics' : {}, 'privates' : {}}
@@ -66,7 +83,7 @@ def get_needed_class(filenames, plugin_list, alias_list):
     name = path_array[-1:][0].split('.')[0]
     if not name in plugin_list:
       continue
-    path =  "/".join(path_array[:len(path_array) - 1])
+    path = "/".join(path_array[:len(path_array) - 1])
     wanted_class = cmd_to_class(name)
     if path.endswith('/'):
       src_path = path + path_array[-1:][0]
@@ -93,3 +110,29 @@ def get_needed_class(filenames, plugin_list, alias_list):
                   (wanted_class, filename))
   return [plugins, aliases]
 
+
+def get_needed_hooks(filenames, hook_list):
+  hooks = {}
+  for filename in filenames:
+    path_array = filename.split('/')
+    name = path_array[-1:][0].split('.')[0]
+    if not name in hook_list:
+      continue
+    path = "/".join(path_array[:len(path_array) - 1])
+    wanted_class = cmd_to_class(name)
+    if path.endswith('/'):
+      src_path = path + path_array[-1:][0]
+    else:
+      src_path = "%s/%s" % (path, path_array[-1:][0])
+    hook = imp.load_source(path_array[-1:][0], src_path)
+    if hasattr(hook, wanted_class):
+      class_ = getattr(hook, wanted_class)
+      if issubclass(class_, Hook):
+        class_inst = class_()
+        class_inst.build_regex()
+        hooks.update({name: class_inst})
+      else:
+        logging.error("You need to define ACTIONS dictionary for %s hook class" % wanted_class)
+    else:
+      logging.warn("No %s class found in %s hook file." % (wanted_class, filename))
+      return [plugins, aliases]

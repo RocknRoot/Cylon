@@ -51,9 +51,13 @@ master_names:
       - fraker@frak.net
       - another_fraker@frak.net
 plugin_dir: /a/path/where/plugins/are
+hook_dir: /a/path/where/hooks/are
 loaded_plugins_at_start:
       - plugin_name_1
       - plugin_name_2
+loaded_hooks_at_start:
+      - hook_name_1
+      - hook_name_2
 
 plugin_aliases:
       # !tk plugin_name_2 a_long_method -> !tk short
