@@ -3,6 +3,7 @@ import glob
 import sys
 import logging
 from os.path import exists
+from cylon.hook import Hook
 from cylon.plugin import Plugin, Public, Private
 
 class Loader:

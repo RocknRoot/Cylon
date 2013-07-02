@@ -19,5 +19,5 @@ class Hook:
 
 
   def build_regex(self):
-    for r in ACTIONS.keys():
-      self.regex.append((re.compile(r), ACTIONS[r]))
+    for r in self.ACTIONS.keys():
+      self.regex.append((re.compile(r), self.ACTIONS[r]))
