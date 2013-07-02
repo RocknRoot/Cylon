@@ -34,11 +34,14 @@ class Cylon:
     logging.info("Starting Cylon !")
     self._settings = Settings(self._options.conf_file)
     # hooks
-    hooks = Loader.get_hooks(self._settings.hook_dir,
-                             self._settings.loaded_hooks_at_start)
-    self._hooks = hooks
-    Hook.hooks = self._hooks
-    Hook.settings = self._settings
+    if not self._settings.loaded_hooks_at_start:
+      self._hooks = None
+    else:
+      hooks = Loader.get_hooks(self._settings.plugin_dir,
+                               self._settings.loaded_hooks_at_start)
+      self._hooks = hooks
+      Hook.hooks = self._hooks
+      Hook.settings = self._settings
     # plugins
     if not hasattr(self._settings, 'plugin_aliases'):
       self._settings.plugin_aliases = {}
@@ -59,7 +62,8 @@ class Cylon:
     # connection
     self.__connect()
     Plugin.connection = self._conn
-    Hook.connection = self._conn
+    if self._hooks != None:
+      Hook.connection = self._conn
     self.__run()
 
 
@@ -74,7 +78,7 @@ class Cylon:
          % self._settings.command_prefix)
 
     # hooks
-    if prefixed == False:
+    if (prefixed == False) and (self._hooks != None):
       for hook in self._hooks:
         for regex, func in hook.regex:
           res = regex.search(mess.getBody())
