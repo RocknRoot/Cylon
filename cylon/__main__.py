@@ -89,7 +89,7 @@ class Cylon:
             try:
               msg = getattr(self._hooks[hook], func)(mess.getBody(), mess.getFrom(), res)
             except:
-              msg = "%s hook execution error" % hook.__class__.__name__
+              msg = "%s hook execution error" % hook_name
             if msg:
               logging.debug(msg)
               if mess.getType() == "groupchat":
