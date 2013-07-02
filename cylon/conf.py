@@ -7,8 +7,6 @@ class Settings:
     MANDATORY_ATTR = { 'username' : str,
                        'domain' : str,
                        'password' : str ,
-                       'loaded_plugins_at_start' : list,
-                       'loaded_hooks_at_start' : list,
                        'plugin_dir' : str,
                        'chat_name' : str,
                        'master_names' : list,
@@ -17,6 +15,8 @@ class Settings:
     OPTIONNAL_ATTR = { 'log_mode' : int,
                        'default_status' : str,
                        'groupchat': list,
+                       'loaded_plugins_at_start' : list,
+                       'loaded_hooks_at_start' : list,
                        'plugin_aliases' : list }
 
     ATTRS = [ MANDATORY_ATTR, OPTIONNAL_ATTR ]
@@ -65,9 +65,12 @@ class Settings:
         for attr in attr_type:
           if self._conf_file_values.has_key(attr):
             if not isinstance(self._conf_file_values[attr], attr_type[attr]):
-              logging.error("Type error in configuration file: %s has to be a %s." %
-                           (attr, attr_type[attr]))
-              exit()
+              if not attr.startswith("loaded_"):
+                logging.error("Type error in configuration file: %s has to be a %s." %
+                             (attr, attr_type[attr]))
+                exit()
+              else:
+                setattr(self, attr, None)
             else:
               if attr == "plugin_aliases":
                 value = self.__build_alias_settings(self._conf_file_values[attr])

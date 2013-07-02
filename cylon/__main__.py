@@ -45,11 +45,14 @@ class Cylon:
     # plugins
     if not hasattr(self._settings, 'plugin_aliases'):
       self._settings.plugin_aliases = {}
-    modules = Loader.get_modules(self._settings.plugin_dir,
-                                 self._settings.loaded_plugins_at_start,
-                                 self._settings.plugin_aliases)
-    self._modules = modules[0]
-    self._aliases = modules[1]
+    if not  self._settings.loaded_plugins_at_start:
+      self._modules = self._aliases = {'publics' : {}, 'privates' : {}}
+    else:
+      modules = Loader.get_modules(self._settings.plugin_dir,
+                                   self._settings.loaded_plugins_at_start,
+                                   self._settings.plugin_aliases)
+      self._modules = modules[0]
+      self._aliases = modules[1]
     built = Loader.get_builtins()
     self._modules['publics'].update(built['publics'])
     self._modules['privates'].update(built['privates'])
