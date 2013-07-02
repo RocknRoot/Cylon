@@ -87,7 +87,7 @@ class Cylon:
               if mess.getType() == "groupchat":
                 self.send(str(mess.getFrom()).split('/')[0], msg, "groupchat")
               else:
-                self;send(mess.getFrom(), msg, "chat")
+                self.send(mess.getFrom(), msg, "chat")
 
     # plugins
     modules = {}
