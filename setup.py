@@ -12,6 +12,6 @@ setup(
     license="BSD",
     platforms="Unix",
     packages=["cylon"],
-    provides=["cylon", "xmpppy", "pyyaml"],
+    provides=["cylon", "xmpppy", "pyyaml", "pydns"],
     scripts=["bin/cylon"],
     keywords=["Jabber", "XMPP", "Bot", "Plugins"])
