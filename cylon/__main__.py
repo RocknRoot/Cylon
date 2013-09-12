@@ -1,6 +1,7 @@
 import logging
 import xmpp
 import re
+import time
 from cylon.conf    import Settings
 from cylon.command import Loader
 from cylon.plugin  import Plugin
@@ -269,17 +270,30 @@ class Cylon:
 
 
   def __run(self):
+    retries = 0
     while True:
       try:
-        self._conn.Process(1)
         if not self._conn.isConnected():
           logging.info('Bot not connected, reconnecting...')
           self._conn.reconnectAndReauth()
+          self._conn.RegisterHandler('message', self.message_handler)
+          self._conn.RegisterHandler('presence', self.presence_handler)
+          self._conn.sendInitPresence()
+          self.roster = self._conn.Roster.getRoster()
+          if hasattr(self._settings, 'default_status'):
+            self._conn.send(xmpp.Presence(status=self._settings.default_status))
+          if hasattr(self._settings, 'groupchat'): self.__join_muc()
+        self._conn.Process(1)
       except KeyboardInterrupt:
         logging.info('Signal catched, shutting down.')
         break
       except:
         logging.error('Unexpected error')
-        break
+        if retries <= 3:
+          retries += 1
+          time.sleep(2)
+          continue
+        else:
+          break
     logging.info('Exiting. Bye.')
     exit()
